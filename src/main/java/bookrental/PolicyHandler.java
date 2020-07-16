@@ -18,6 +18,7 @@ public class PolicyHandler{
 
     @Autowired
     BookListStatusRepository bookStatusRepo;
+
     @Autowired
     BlurayListStatusRepository blurayStatusRepo;
 
@@ -75,25 +76,62 @@ public class PolicyHandler{
                 bookRentalRepo.save(bookRental);
 
 
-                Optional<BookListStatus> bookListStatusOptional = bookStatusRepo.findById(bookRental.getBookId());
-                if( bookListStatusOptional.isPresent() ){
+                //Optional<BookListStatus> bookListStatusOptional = bookStatusRepo.findById(bookRental.getBookId());
+                Optional<BookListStatus> bookListStatusOptional = Optional.empty();
+                Optional<BlurayListStatus> blurayListStatusSystemOptional = Optional.empty();
+                boolean isBookListStatus = false;
+                boolean isBlurayListStatus = false;
+
+                if(bookRental.getBookId() != null) {
+                    bookListStatusOptional = bookStatusRepo.findById(bookRental.getBookId());
+                    isBookListStatus = true;
+                }
+                if(bookRental.getBlurayId() != null){
+                    blurayListStatusSystemOptional = blurayStatusRepo.findById(bookRental.getBlurayId());
+                    isBlurayListStatus = true;
+                }
+                System.out.println("systemoptional complete");
+
+                if( isBookListStatus == true && isBlurayListStatus == false ){
+                    System.out.println("if in 1");
                     BookListStatus bookStatus = bookListStatusOptional.get();
 
                     bookStatus.setRentalStatus("RENTED");
+                    System.out.println("bookid: " + bookStatus.getId());
 
                     bookStatusRepo.save(bookStatus);
+                }
+                else if( isBookListStatus == false && isBlurayListStatus == true ){
+                    //BookListStatus bookStatus = bookListStatusOptional.get();
+                    System.out.println("if in 2");
+                    BlurayListStatus blurayStatus = blurayListStatusSystemOptional.get();
+
+                    blurayStatus.setRentalStatus("RENTED");
+
+                    blurayStatusRepo.save(blurayStatus);
+                }
+                else if( isBookListStatus == true && isBlurayListStatus == true ){
+                    System.out.println("if in 3");
+                    BookListStatus bookStatus = bookListStatusOptional.get();
+                    BlurayListStatus blurayStatus = blurayListStatusSystemOptional.get();
+
+                    bookStatus.setRentalStatus("RENTED");
+                    blurayStatus.setRentalStatus("RENTED");
+
+                    bookStatusRepo.save(bookStatus);
+                    blurayStatusRepo.save(blurayStatus);
                 }
                 else {
                     System.out.println("wheneverPaid_ChangeBookStatus, book Id : " + bookRental.getBookId());
                 }
-                Optional<BlurayListStatus> blurayListStatusOptional = blurayStatusRepo.findById(bookRental.getBlurayId());
+                /*Optional<BlurayListStatus> blurayListStatusOptional = blurayStatusRepo.findById(bookRental.getBlurayId());
                 if(blurayListStatusOptional.isPresent()){
                     BlurayListStatus blurayStatus = blurayListStatusOptional.get();
 
                     blurayStatus.setRentalStatus("RENTED");
 
                     blurayStatusRepo.save(blurayStatus);
-                }
+                }*/
             }
             else {
                 System.out.println("RENTED. rental Id : " + paid.getRentalId());
@@ -110,23 +148,67 @@ public class PolicyHandler{
             if( bookRentalSystemOptional.isPresent() ) {
                 BookRentalSystem bookRental = bookRentalSystemOptional.get();
 
-                Optional<BookListStatus> bookListStatusOptional = bookStatusRepo.findById(bookRental.getBookId());
-                if( bookListStatusOptional.isPresent() ){
+                Optional<BookListStatus> bookListStatusOptional = Optional.empty();
+                Optional<BlurayListStatus> blurayListStatusSystemOptional = Optional.empty();
+                boolean isBookListStatus = false;
+                boolean isBlurayListStatus = false;
+
+                if(bookRental.getBookId() != null) {
+                    bookListStatusOptional = bookStatusRepo.findById(bookRental.getBookId());
+                    isBookListStatus = true;
+                }
+                if(bookRental.getBlurayId() != null){
+                    blurayListStatusSystemOptional = blurayStatusRepo.findById(bookRental.getBlurayId());
+                    isBlurayListStatus = true;
+                }
+
+                if( isBookListStatus == true && isBlurayListStatus == false ){
+                    System.out.println("if in 1");
+                    BookListStatus bookStatus = bookListStatusOptional.get();
+
+                    bookStatus.setRentalStatus("IDLE");
+                    System.out.println("bookid: " + bookStatus.getId());
+
+                    bookStatusRepo.save(bookStatus);
+                }
+                else if( isBookListStatus == false && isBlurayListStatus == true ){
+                    //BookListStatus bookStatus = bookListStatusOptional.get();
+                    System.out.println("if in 2");
+                    BlurayListStatus blurayStatus = blurayListStatusSystemOptional.get();
+
+                    blurayStatus.setRentalStatus("IDLE");
+
+                    blurayStatusRepo.save(blurayStatus);
+                }
+                else if( isBookListStatus == true && isBlurayListStatus == true ){
+                    System.out.println("if in 3");
+                    BookListStatus bookStatus = bookListStatusOptional.get();
+                    BlurayListStatus blurayStatus = blurayListStatusSystemOptional.get();
+
+                    bookStatus.setRentalStatus("IDLE");
+                    blurayStatus.setRentalStatus("IDLE");
+
+                    bookStatusRepo.save(bookStatus);
+                    blurayStatusRepo.save(blurayStatus);
+                }
+
+                //Optional<BookListStatus> bookListStatusOptional = bookStatusRepo.findById(bookRental.getBookId());
+                /*if( bookListStatusOptional.isPresent() ){
                     BookListStatus bookStatus = bookListStatusOptional.get();
 
                     bookStatus.setRentalStatus("IDLE");
 
                     bookStatusRepo.save(bookStatus);
-                }
+                }*/
 
-                Optional<BlurayListStatus> blurayListStatusOptional = blurayStatusRepo.findById(bookRental.getBlurayId());
+                /*Optional<BlurayListStatus> blurayListStatusOptional = blurayStatusRepo.findById(bookRental.getBlurayId());
                 if(blurayListStatusOptional.isPresent()){
                     BlurayListStatus blurayStatus = blurayListStatusOptional.get();
 
                     blurayStatus.setRentalStatus("IDLE");
 
                     blurayStatusRepo.save(blurayStatus);
-                }
+                }*/
             }
         }
     }
