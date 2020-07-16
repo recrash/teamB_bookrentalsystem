@@ -21,6 +21,7 @@ public class BookRentalSystem {
     @GeneratedValue(strategy=GenerationType.AUTO)
     private Long id;
     private Long bookId;
+    private Long blurayId;
     private Long userId;
     private Date rentalDate;
     private Date expiredDate;
@@ -39,6 +40,7 @@ public class BookRentalSystem {
             // mappings goes here
             payment.setRentalId(this.getId()) ;
             payment.setBookId(this.getBookId());
+            payment.setBlurayId(this.getBlurayId());
             payment.setRate(this.getRentalFee());
             payment.setRegDate(this.getRentalDate());
             payment.setPayStatus(this.getRentalStatus());
@@ -112,6 +114,7 @@ public class BookRentalSystem {
             payment.setId(this.getId());
             payment.setRentalId(this.getId()) ;
             payment.setBookId(this.getBookId());
+            payment.setBlurayId(this.getBlurayId());
             payment.setRate(this.getRentalFee());
             payment.setRegDate(this.getRentalDate());
             payment.setPayStatus("CANCELLED");
@@ -164,7 +167,7 @@ public class BookRentalSystem {
         // it is NOT A GOOD PRACTICE. instead, Event-Policy mapping is recommended.
 
         RestTemplate restTemplate = BookrentalsystemApplication.applicationContext.getBean(RestTemplate.class);
-        String productUrl = "localhost:8084/payments/search/findByRentalIdAndBookId rentalId==" + this.getId() + " bookId==" + this.getBookId() ;
+        String productUrl = "localhost:8084/payments/search/findByRentalIdAndBookId rentalId==" + this.getId() + " bookId==" + this.getBookId();
 
         System.out.println("onPreRemove(), productUrl is " + productUrl );
 
@@ -183,6 +186,7 @@ public class BookRentalSystem {
         payment.setId(id);
         payment.setRentalId(this.getId()) ;
         payment.setBookId(this.getBookId());
+        payment.setBlurayId(this.getBlurayId());
         payment.setRate(this.getRentalFee());
         payment.setRegDate(this.getRentalDate());
         payment.setPayStatus("CANCELLED");
@@ -250,7 +254,8 @@ public class BookRentalSystem {
         this.rentalStatus = rentalStatus;
     }
 
-
+    public void setBlurayId(Long blurayId) { this.blurayId = blurayId;}
+    public Long getBlurayId() { return blurayId;}
 
 
 }

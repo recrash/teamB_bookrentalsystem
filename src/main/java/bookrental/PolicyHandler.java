@@ -18,6 +18,8 @@ public class PolicyHandler{
 
     @Autowired
     BookListStatusRepository bookStatusRepo;
+    @Autowired
+    BlurayListStatusRepository blurayStatusRepo;
 
     @StreamListener(KafkaProcessor.INPUT)
     public void onStringEventListener(@Payload String eventString){
@@ -37,6 +39,23 @@ public class PolicyHandler{
             bookStatus.setRentalStatus("IDLE");
 
             bookStatusRepo.save(bookStatus);
+        }
+    }
+
+    @StreamListener(KafkaProcessor.INPUT)
+    public void wheneverBlurayRegistered_ChangeBlurayStatus(@Payload BlurayRegistered blurayRegistered){
+
+        if(blurayRegistered.isMe()){
+            System.out.println("##### listener ChangeBlurayStatus : " + blurayRegistered.toJson());
+
+            BlurayListStatus blurayStatus = new BlurayListStatus();
+            blurayStatus.setBlurayName((blurayRegistered.getBlurayName()));
+            blurayStatus.setRentalFee(blurayRegistered.getRentalFee());
+            blurayStatus.setId(blurayRegistered.getId());
+            blurayStatus.setRentalStatus("IDLE");
+            System.out.println("Set Complete");
+
+            blurayStatusRepo.save(blurayStatus);
         }
     }
 
@@ -67,6 +86,14 @@ public class PolicyHandler{
                 else {
                     System.out.println("wheneverPaid_ChangeBookStatus, book Id : " + bookRental.getBookId());
                 }
+                Optional<BlurayListStatus> blurayListStatusOptional = blurayStatusRepo.findById(bookRental.getBlurayId());
+                if(blurayListStatusOptional.isPresent()){
+                    BlurayListStatus blurayStatus = blurayListStatusOptional.get();
+
+                    blurayStatus.setRentalStatus("RENTED");
+
+                    blurayStatusRepo.save(blurayStatus);
+                }
             }
             else {
                 System.out.println("RENTED. rental Id : " + paid.getRentalId());
@@ -90,6 +117,15 @@ public class PolicyHandler{
                     bookStatus.setRentalStatus("IDLE");
 
                     bookStatusRepo.save(bookStatus);
+                }
+
+                Optional<BlurayListStatus> blurayListStatusOptional = blurayStatusRepo.findById(bookRental.getBlurayId());
+                if(blurayListStatusOptional.isPresent()){
+                    BlurayListStatus blurayStatus = blurayListStatusOptional.get();
+
+                    blurayStatus.setRentalStatus("IDLE");
+
+                    blurayStatusRepo.save(blurayStatus);
                 }
             }
         }

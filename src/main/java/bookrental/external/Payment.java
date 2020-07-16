@@ -7,6 +7,7 @@ public class Payment {
     private Long id;
     private Long rentalId;
     private Long bookId;
+    private Long blurayId;
     private Integer rate;
     private Date regDate;
     private String payStatus;
@@ -48,4 +49,11 @@ public class Payment {
         this.payStatus = payStatus;
     }
 
+    public Long getBlurayId() {
+        return blurayId;
+    }
+
+    public void setBlurayId(Long blurayId) {
+        this.blurayId = blurayId;
+    }
 }
